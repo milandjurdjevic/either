@@ -23,7 +23,7 @@ public abstract class Either<TOk, TError>
     }
 }
 
-public static class Either
+public static partial class Either
 {
     public static Either<TOk, TError> Ok<TOk, TError>(TOk ok) => ok;
 

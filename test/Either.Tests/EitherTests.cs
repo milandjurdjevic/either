@@ -6,7 +6,7 @@ using static Either;
 
 [TestSubject(typeof(Either))]
 [TestSubject(typeof(Either<,>))]
-public class EitherTests
+public partial class EitherTests
 {
     [Fact]
     public void Match_Error_Error()
