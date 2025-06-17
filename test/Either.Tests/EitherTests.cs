@@ -114,4 +114,43 @@ public partial class EitherTests
 
         Assert.Equal(-1, match);
     }
+
+    [Fact]
+    public void Catch_Ok_Ok()
+    {
+        var match = Ok<int, string>(42)
+            .Catch(err => new ArgumentException(err))
+            .Match(ok => ok, _ => -1);
+
+        Assert.Equal(42, match);
+    }
+
+    [Fact]
+    public void Catch_Error_TransformedError()
+    {
+        var transformed = Error<int, string>("error")
+            .Catch(err => err.Length);
+
+        var matchedValue = transformed.Match(
+            ok => $"Ok: {ok}",
+            err => $"Error: {err}"
+        );
+
+        Assert.Equal("Error: 5", matchedValue);
+    }
+
+    [Fact]
+    public void Catch_Error_ChainedTransformation()
+    {
+        var result = Error<int, string>("initial error")
+            .Catch(err => err.ToUpperInvariant())
+            .Catch(err => err.Length);
+
+        var match = result.Match(
+            ok => ok,
+            err => err
+        );
+
+        Assert.Equal(13, match);
+    }
 }
