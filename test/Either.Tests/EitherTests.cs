@@ -75,4 +75,43 @@ public partial class EitherTests
 
         Assert.Equal(-1, match);
     }
+
+    [Fact]
+    public void SelectMany_Ok_Ok()
+    {
+        var match = Ok<int, string>(10)
+            .SelectMany(
+                ok1 => Ok<int, string>(ok1 * 2),
+                (ok1, ok2) => ok1 + ok2
+            )
+            .Match(ok => ok, _ => -1);
+
+        Assert.Equal(30, match);
+    }
+
+    [Fact]
+    public void SelectMany_OkToError_Error()
+    {
+        var match = Ok<int, string>(10)
+            .SelectMany(
+                _ => Error<int, string>("error"),
+                (ok1, ok2) => ok1 + ok2
+            )
+            .Match(ok => ok, _ => -1);
+
+        Assert.Equal(-1, match);
+    }
+
+    [Fact]
+    public void SelectMany_Error_Error()
+    {
+        var match = Error<int, string>("error")
+            .SelectMany(
+                ok1 => Ok<int, string>(ok1 * 2),
+                (ok1, ok2) => ok1 + ok2
+            )
+            .Match(ok => ok, _ => -1);
+
+        Assert.Equal(-1, match);
+    }
 }
