@@ -70,6 +70,104 @@ public partial class EitherTests
 
         Assert.Equal("error", select.Match<string>(ok => ok, err => err));
     }
+
+    [Fact]
+    public async Task SelectFlatAsync1_Ok_Ok()
+    {
+        const string expected = "success";
+        var select = await EitherAsync.Ok().SelectFlatAsync(_ => Either.Ok<string, string>(expected));
+        var match = select.Match<string>(ok => ok, err => err);
+        Assert.Equal(expected, match);
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync2_Ok_Ok()
+    {
+        var select = await EitherSync.Ok().SelectFlatAsync(async _ =>
+        {
+            await EitherAsync.Delay;
+            return Either.Ok<string, string>("success");
+        });
+
+        Assert.Equal("success", select.Match<string>(ok => ok, err => err));
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync3_Ok_Ok()
+    {
+        var select = await EitherAsync.Ok().SelectFlatAsync(async _ =>
+        {
+            await EitherAsync.Delay;
+            return Either.Ok<string, string>("success");
+        });
+
+        Assert.Equal("success", select.Match<string>(ok => ok, err => err));
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync1_Error_Error()
+    {
+        var select = await EitherAsync.Error().SelectFlatAsync(_ => Either.Ok<string, string>("success"));
+        var match = select.Match<string>(ok => ok, err => err);
+        Assert.Equal("error", match);
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync2_Error_Error()
+    {
+        var select = await EitherSync.Error().SelectFlatAsync(async _ =>
+        {
+            await EitherAsync.Delay;
+            return Either.Ok<string, string>("success");
+        });
+
+        Assert.Equal("error", select.Match<string>(ok => ok, err => err));
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync3_Error_Error()
+    {
+        var select = await EitherAsync.Error().SelectFlatAsync(async _ =>
+        {
+            await EitherAsync.Delay;
+            return Either.Ok<string, string>("success");
+        });
+
+        Assert.Equal("error", select.Match<string>(ok => ok, err => err));
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync1_Ok_Error()
+    {
+        const string expected = "mapped error";
+        var select = await EitherAsync.Ok().SelectFlatAsync(_ => Either.Error<string, string>(expected));
+        var match = select.Match<string>(ok => ok, err => err);
+        Assert.Equal(expected, match);
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync2_Ok_Error()
+    {
+        var select = await EitherSync.Ok().SelectFlatAsync(async _ =>
+        {
+            await EitherAsync.Delay;
+            return Either.Error<string, string>("mapped error");
+        });
+
+        Assert.Equal("mapped error", select.Match<string>(ok => ok, err => err));
+    }
+
+    [Fact]
+    public async Task SelectFlatAsync3_Ok_Error()
+    {
+        var select = await EitherAsync.Ok().SelectFlatAsync(async _ =>
+        {
+            await EitherAsync.Delay;
+            return Either.Error<string, string>("mapped error");
+        });
+
+        Assert.Equal("mapped error", select.Match<string>(ok => ok, err => err));
+    }
 }
 
 file static class EitherSync

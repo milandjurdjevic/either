@@ -22,4 +22,19 @@ public static partial class Either
         this Task<Either<TOk1, TError>> self,
         Func<TOk1, Task<TOk2>> map
     ) => await (await self).SelectAsync(map);
+
+    public static async Task<Either<TOk2, TError>> SelectFlatAsync<TOk1, TOk2, TError>(
+        this Task<Either<TOk1, TError>> self,
+        Func<TOk1, Either<TOk2, TError>> map
+    ) => (await self).SelectFlat(map);
+
+    public static Task<Either<TOk2, TError>> SelectFlatAsync<TOk1, TOk2, TError>(
+        this Either<TOk1, TError> self,
+        Func<TOk1, Task<Either<TOk2, TError>>> map
+    ) => self.Match<Task<Either<TOk2, TError>>>(async ok => await map(ok), async err => await Task.FromResult(err));
+
+    public static async Task<Either<TOk2, TError>> SelectFlatAsync<TOk1, TOk2, TError>(
+        this Task<Either<TOk1, TError>> self,
+        Func<TOk1, Task<Either<TOk2, TError>>> map
+    ) => await (await self).SelectFlatAsync(map);
 }
