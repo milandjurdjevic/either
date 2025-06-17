@@ -168,6 +168,20 @@ public partial class EitherTests
 
         Assert.Equal("mapped error", select.Match<string>(ok => ok, err => err));
     }
+
+    [Fact]
+    public async Task CatchAsync_Ok_Ok()
+    {
+        var select = await EitherAsync.Ok().CatchAsync(err => err.ToUpperInvariant());
+        Assert.Equal("ok", select.Match<string>(_ => "ok", err => err));
+    }
+
+    [Fact]
+    public async Task CatchAsync_Error_Error()
+    {
+        var select = await EitherAsync.Error().CatchAsync(err => err.ToUpperInvariant());
+        Assert.Equal("ERROR", select.Match<string>(_ => "ok", err => err));
+    }
 }
 
 file static class EitherSync

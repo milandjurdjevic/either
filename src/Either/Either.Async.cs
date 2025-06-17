@@ -37,4 +37,9 @@ public static partial class Either
         this Task<Either<TOk1, TError>> self,
         Func<TOk1, Task<Either<TOk2, TError>>> map
     ) => await (await self).SelectFlatAsync(map);
+    
+    public static async Task<Either<TOk, TError2>> CatchAsync<TOk, TError1, TError2>(
+        this Task<Either<TOk, TError1>> self,
+        Func<TError1, TError2> map
+    ) => (await self).Catch(map);
 }
